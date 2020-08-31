@@ -162,7 +162,7 @@ condition(u,t,integrator) = t==5.
 affect!(integrator) = integrator.p = p_cut
 cb = DiscreteCallback(condition,affect!)
 tspan = (0.,20.)
-dde_prob = DDEProblem(nd_delay!, x0, h, tspan, p)
+dde_prob = DDEProblem(nd_delay!, x0, h, tspan, (vertexp, ones(ne(g)) * edgep, τ))
 
 sol_delay = solve(dde_prob, MethodOfSteps(Rosenbrock23(autodiff=false)), callback=cb, tstops=[5.]);
 plot(sol_delay, ylabel="θ", vars=vars, lc = nodefillc)
