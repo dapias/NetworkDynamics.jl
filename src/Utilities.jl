@@ -65,7 +65,7 @@ end
 ## non-allocating but code duplication
 
 @inline Base.@propagate_inbounds function p_v_idx(p::Tuple{T1,T2,T3}, i) where {T1 <: AbstractArray, T2, T3}
-    p[1][:, i]
+    @view p[1][:, i]
 end
 
 @inline Base.@propagate_inbounds function p_v_idx(p::Tuple{T1,T2,T3}, i) where {T1 <: AbstractArray{T4, 1} where T4, T3, T2}
@@ -77,7 +77,7 @@ end
 end
 
 @inline Base.@propagate_inbounds function p_v_idx(p::Tuple{T1,T2}, i) where {T1 <: AbstractArray, T2}
-    p[1][:, i]
+    @view p[1][:, i]
 end
 
 @inline Base.@propagate_inbounds function p_v_idx(p::Tuple{T1,T2}, i) where {T1 <: AbstractArray{T3, 1} where T3, T2}
@@ -98,7 +98,7 @@ end
 ## non-allocating but code duplication
 
 @inline Base.@propagate_inbounds function p_e_idx(p::Tuple{T1,T2,T3}, i) where {T1 <: AbstractArray, T2, T3}
-    p[2][:, i]
+    @view p[2][:, i]
 end
 
 @inline Base.@propagate_inbounds function p_e_idx(p::Tuple{T1,T2,T3}, i) where {T1 <: AbstractArray{T4, 1} where T4, T3, T2}
@@ -110,7 +110,7 @@ end
 end
 
 @inline Base.@propagate_inbounds function p_e_idx(p::Tuple{T1,T2}, i) where {T1, T2 <: AbstractArray}
-    p[2][:, i]
+    @view p[2][:, i]
 end
 
 @inline Base.@propagate_inbounds function p_e_idx(p::Tuple{T1,T2}, i) where {T1, T2 <: AbstractArray{T3, 1} where T3}
@@ -127,13 +127,13 @@ end
 end
 
 
-export oriented_edge_sum!
+export oriented_symmetric_edge_sum!
 
 """
 A small utility function for writing diffusion dynamics. It provides the
 oriented sum of all the incident edges.
 """
-@inline function oriented_edge_sum!(e_sum, e_s, e_d)
+@inline function oriented_symmetric_edge_sum!(e_sum, e_s, e_d)
     @inbounds for e in e_s
         e_sum .-= e
     end
