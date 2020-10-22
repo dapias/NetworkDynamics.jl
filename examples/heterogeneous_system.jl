@@ -57,10 +57,10 @@ static! = StaticVertex(f! = (θ, e_s, e_d, c, t) -> θ .= c, dim = 1, sym = [:θ
 function kuramoto_inertia!(dv, v, e_s, e_d, P, t)
     dv[1] = v[2]
     dv[2] = P - 1. * v[2]
-    for e in e_s
+    @inbounds for e in e_s
         dv[1] -= e[1]
     end
-    for e in e_d
+    @inbounds for e in e_d
         dv[1] += e[1]
     end
 end

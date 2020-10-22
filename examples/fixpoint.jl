@@ -12,10 +12,10 @@ gplot(g)
 function swing_eq!(dv, v, e_s, e_d, P, t)
     dv[1] = v[2]
     dv[2] = P - 0.1 * v[2]
-    for e in e_s
+    @inbounds for e in e_s
         dv[2] -= e[1]
     end
-    for e in e_d
+    @inbounds for e in e_d
         dv[2] += e[1]
     end
 end

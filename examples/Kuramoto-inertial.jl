@@ -57,10 +57,10 @@ end
 # @inline Base.@propagate_inbounds
 @inline Base.@propagate_inbounds function kuramoto_vertex!(dv, v, e_s, e_d, p, t)
     dv[1] = p - v[1]
-    for e in e_s
+    @inbounds for e in e_s
         dv[1] -= e[1]
     end
-    for e in e_d
+    @inbounds for e in e_d
         dv[1] += e[1]
     end
     dv[2] = v[1]

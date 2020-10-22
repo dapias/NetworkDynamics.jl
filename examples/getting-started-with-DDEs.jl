@@ -20,10 +20,10 @@ end
 
 function diffusionvertex!(dv, v, e_s, e_d, h_v, p, t)
     dv .= -h_v
-    for e in e_s
+    @inbounds for e in e_s
         dv .-= e
     end
-    for e in e_d
+    @inbounds for e in e_d
         dv .+= e
     end
     nothing
@@ -98,10 +98,10 @@ end
 
 function kuramoto_vertex!(dv, v, e_s, e_d, p, t)
     dv[1] = p
-    for e in e_s
+    @inbounds for e in e_s
         dv[1] -= e[1]
     end
-    for e in e_d
+    @inbounds for e in e_d
         dv[1] -= e[2]
     end
     nothing

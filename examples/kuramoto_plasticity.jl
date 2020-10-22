@@ -33,10 +33,10 @@ end
 
 @inline function kuramoto_plastic_vertex!(dv, v, e_s, e_d, p, t)
     dv .= 0
-    for e in e_s
+    @inbounds for e in e_s
         dv .-= e[1]
     end
-    for e in e_d # other direction is stored at other index
+    @inbounds for e in e_d # other direction is stored at other index
         dv .-= e[3]
     end
 end

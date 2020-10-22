@@ -26,11 +26,11 @@ function diffusionvertex!(dv, v, e_s, e_d, p, t)
     # usually v, e_s, e_d are arrays, hence we use the broadcasting operator .
     dv .= 0.
     # edges for which v is the source
-    for e in e_s
+    @inbounds for e in e_s
         dv .-= e
     end
     # edges for which v is the destination
-    for e in e_d
+    @inbounds for e in e_d
         dv .+= e
     end
     nothing
