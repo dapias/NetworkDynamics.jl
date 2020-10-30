@@ -82,6 +82,11 @@ prob_undirected = ODEProblem(undirected_network!, x0, (0.,t_max), parameters_und
 prob_directed = ODEProblem(directed_network!, x0, (0.,t_max), parameters_directed, atol=1e-6, rtol=0)
 prob_undirected_improved = ODEProblem(undirected_improved_network!, x0, (0.,t_max), parameters_directed, atol=1e-6, rtol=0)
 
+### Benchmarking
+time_to_solve_undirected = @elapsed(mod.(solve(prob_undirected, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π))
+time_to_solve_directed   = @elapsed(mod.(solve(prob_directed, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π))
+time_to_solve_undirected_improved = @elapsed(mod.(solve(prob_undirected_improved, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π))
+
 sol_undirected = mod.(solve(prob_undirected, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π)
 sol_directed = mod.(solve(prob_directed, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π)
 sol_undirected_improved = mod.(solve(prob_undirected_improved, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π)
@@ -91,9 +96,3 @@ plot_undirected = plot(t,sol_undirected[1,:], label = "Undirected Graph")
 
 plot_undirected_and_directed = plot!(plot_undirected, t, sol_directed[1,:], label = "Directed Graph")
 plot!(plot_undirected_and_directed, t, sol_undirected_improved[1,:], label = "Undirected and improved Graph")
-
-
-### Benchmarking
-time_to_solve_undirected = @elapsed(mod.(solve(prob_undirected, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π))
-time_to_solve_directed   = @elapsed(mod.(solve(prob_directed, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π))
-time_to_solve_undirected_improved = @elapsed(mod.(solve(prob_undirected_improved, DP5(), tstops=0.:0.1:t_max, saveat=0.:0.1:t_max), 2π))
