@@ -47,9 +47,9 @@ function (d::nd_ODE_Static)(dx, x, p, t)
 
     @nd_threads d.parallel for i in 1:gs.num_v
         maybe_idx(d.vertices!,i).f!(view(dx,gs.v_idx[i]),
-                                    view(gd.v_array, gs.v_idx[i]),
-                                    gd.e_s_v[i],
-                                    gd.e_d_v[i],
+                                    view(x, gs.v_idx[i]),
+                                    view(gd.e_views, gs.e_s_v_idx[i]),
+                                    view(gd.e_views, gs.e_d_v_idx[i]),
                                     p_v_idx(p, i), t)
     end
 

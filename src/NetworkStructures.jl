@@ -80,6 +80,8 @@ struct GraphStruct
     d_e_offs::Array{Int, 1}
     s_e_idx::Array{Idx, 1}
     d_e_idx::Array{Idx, 1}
+    e_s_v_idx::Array{Array{Int, 1}, 1}
+    e_d_v_idx::Array{Array{Int, 1}, 1}
     e_s_v_dat::Array{Array{Tuple{Int,Int}, 1}}
     e_d_v_dat::Array{Array{Tuple{Int,Int}, 1}}
 end
@@ -101,6 +103,10 @@ function GraphStruct(g, v_dims, e_dims, v_syms, e_syms)
 
     s_e_idx = [v_idx[s_e[i_e]] for i_e in 1:num_e]
     d_e_idx = [v_idx[d_e[i_e]] for i_e in 1:num_e]
+
+    edge_arr = collect(edges(g))
+    e_s_v_idxs = [[i for i in 1:ne(g) if src(edge_arr[i]) == j] for j in 1:nv(g)]
+    e_d_v_idxs = [[i for i in 1:ne(g) if dst(edge_arr[i]) == j] for j in 1:nv(g)]
 
     e_s_v_dat = [[(offset, dim) for (i_e, (offset, dim)) in enumerate(zip(e_offs, e_dims)) if i_v == s_e[i_e]] for i_v in 1:num_v]
     e_d_v_dat = [[(offset, dim) for (i_e, (offset, dim)) in enumerate(zip(e_offs, e_dims)) if i_v == d_e[i_e]] for i_v in 1:num_v]
@@ -124,6 +130,8 @@ function GraphStruct(g, v_dims, e_dims, v_syms, e_syms)
     d_e_offs,
     s_e_idx,
     d_e_idx,
+    e_s_v_idxs,
+    e_d_v_idxs,
     e_s_v_dat,
     e_d_v_dat)
 end
@@ -230,14 +238,13 @@ Base.IndexStyle(::Type{<:VertexData}) = IndexLinear()
 # dual and the other not.
 
 mutable struct GraphData{Tv, Te}
-    v_array::Array{Tv, 1}
+    v_array::Array{Tv, 1} # not used any more
     e_array::Array{Te, 1}
-    e_s_v::Array{Array{SubArray{Te, 1, Array{Te, 1},Tuple{UnitRange{Int64}},true},1},1} # the edges that have v as source
-    e_d_v::Array{Array{SubArray{Te, 1, Array{Te, 1},Tuple{UnitRange{Int64}},true},1},1} # the edges that have v as destination
+    e_views::Array{SubArray{Te, 1, Array{Te, 1},Tuple{UnitRange{Int64}},true},1}
+
     function GraphData{Tv, Te}(v_array::Array{Tv, 1}, e_array::Array{Te, 1}, gs::GraphStruct) where {Tv, Te}
         gd = new{Tv, Te}(v_array, e_array, )
-        gd.e_s_v = [[view(gd.e_array, offset+1:offset+dim) for (offset,dim) in e_s_v] for e_s_v in gs.e_s_v_dat]
-        gd.e_d_v = [[view(gd.e_array, offset+1:offset+dim) for (offset,dim) in e_d_v] for e_d_v in gs.e_d_v_dat]
+        gd.e_views = [view(gd.e_array, idx) for idx in gs.e_idx]
         gd
     end
 end
