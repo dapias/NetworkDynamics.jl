@@ -35,13 +35,22 @@ end
 
 function (d::nd_ODE_Static)(dx, x, p, t)
     gd = prep_gd(dx, x, d.graph_data, d.graph_structure)
+    gs = d.graph_structure
 
-    @nd_threads d.parallel for i in 1:d.graph_structure.num_e
-        maybe_idx(d.edges!, i).f!(gd.e[i], gd.v_s_e[i], gd.v_d_e[i], p_e_idx(p, i), t)
+    @nd_threads d.parallel for i in 1:gs.num_e
+        maybe_idx(d.edges!, i).f!(view(gd.e_array, gs.e_idx[i]),
+                                  view(x, gs.s_e_idx[i]),
+                                  view(x, gs.d_e_idx[i]),
+                                  p_e_idx(p, i),
+                                  t)
     end
 
-    @nd_threads d.parallel for i in 1:d.graph_structure.num_v
-        maybe_idx(d.vertices!,i).f!(view(dx,d.graph_structure.v_idx[i]), gd.v[i], gd.e_s_v[i], gd.e_d_v[i], p_v_idx(p, i), t)
+    @nd_threads d.parallel for i in 1:gs.num_v
+        maybe_idx(d.vertices!,i).f!(view(dx,gs.v_idx[i]),
+                                    view(gd.v_array, gs.v_idx[i]),
+                                    gd.e_s_v[i],
+                                    gd.e_d_v[i],
+                                    p_v_idx(p, i), t)
     end
 
     nothing

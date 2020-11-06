@@ -79,3 +79,7 @@ end
 
 
 # For N = [20,200] ND#master is at 1.3 μs, 10.5 μs (median time) on my machine
+
+nd!
+
+gs = nd!.f.graph_structure
